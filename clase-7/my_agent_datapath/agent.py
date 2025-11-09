@@ -5,18 +5,21 @@ from google.adk.tools import google_search,agent_tool
 # 🔐 Autenticación
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../clase-7/cuenta-servicio.json'
 
+model="gemini-2.5-flash"
+model_live="gemini-live-2.5-flash-preview-native-audio-09-2025"
+
+
 # Agente de saludo
 greeting_agent = Agent(
-    model='gemini-2.5-flash',
+    model=model,
     name='agente_saludo',
     description='Un agente especializado en responder saludos cordiales y presentarse de forma amigable.',
     instruction='Responde de manera amable y corta a saludos como "hola", "buenos días", "qué tal", etc, utiliza emojics'
 )
 
-
 # Agente de vuelos
 vuelos_agent = Agent(
-    model='gemini-2.5-flash',
+    model=model,
     name='agente_vuelos',
     description='Un agente especializado en buscar y proporcionar información sobre vuelos.',
     instruction=
@@ -29,7 +32,7 @@ vuelos_agent = Agent(
 
 # Agente de restaurantes
 restaurantes_agent = Agent(
-    model='gemini-2.5-flash',
+    model=model,
     name='agente_restaurantes',
     description='Un agente especializado en buscar y proporcionar información sobre restaurantes.',
     instruction=
@@ -42,7 +45,7 @@ restaurantes_agent = Agent(
 
 
 root_agent = Agent(
-    model='gemini-2.5-flash',
+    model=model,
     name='root_agent',
     description='Agente principal que enruta mensajes a los subagentes.',
     instruction='Dirige el mensaje al subagente adecuado según el contexto (saludo, vuelos o restaurantes).',
