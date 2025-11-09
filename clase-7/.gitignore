@@ -1,0 +1,4 @@
+env/
+.env
+cuenta-servicio.json
+__pycache__/
