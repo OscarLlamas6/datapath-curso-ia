@@ -1,7 +1,7 @@
 
 --Se crea el modelo ARIMA para predecir la cantidad de viajes diarios 
 CREATE OR REPLACE MODEL
-  `PROJECT_ID.raw_data.cta_ridership_model` OPTIONS(MODEL_TYPE='ARIMA',
+  `PROJECT_ID.raw_data.cta_ridership_model` OPTIONS(MODEL_TYPE='ARIMA_PLUS',
     TIME_SERIES_TIMESTAMP_COL='service_date',
     TIME_SERIES_DATA_COL='total_rides',
     HOLIDAY_REGION='us') AS
