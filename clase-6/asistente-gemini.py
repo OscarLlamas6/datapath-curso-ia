@@ -9,6 +9,7 @@ from google.cloud.speech_v2.types import (
     RecognitionConfig,
     StreamingRecognizeRequest,
     ExplicitDecodingConfig,
+    StreamingRecognitionConfig
 )
 
 from google import genai
