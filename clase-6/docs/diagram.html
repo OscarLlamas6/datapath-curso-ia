@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Transcripción en Tiempo Real</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .flow-step {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+        
+        .flow-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .step-number {
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .step-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 10px;
+            padding-left: 35px;
+            font-weight: bold;
+        }
+        
+        .step-description {
+            color: #555;
+            line-height: 1.6;
+            padding-left: 35px;
+        }
+        
+        .code-snippet {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        .arrow {
+            text-align: center;
+            color: #667eea;
+            font-size: 2em;
+            margin: 10px 0;
+        }
+        
+        .component-box {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: #ffeaa7;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .legend {
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .legend-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .legend-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎙️ Flujo de Transcripción en Tiempo Real</h1>
+        
+        <div class="flow-diagram">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-title">🔧 Inicialización</div>
+                <div class="step-description">
+                    Se cargan las credenciales y se configuran los parámetros de audio.
+                    <div class="code-snippet">
+RATE = 8000 Hz (calidad telefónica)<br>
+CHANNELS = 1 (mono)<br>
+audio_q = Queue() # Cola para almacenar audio
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">📁 .env</span>
+                        <span class="component-box">🔑 Credenciales</span>
+                        <span class="component-box">⚙️ Configuración</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-title">🎤 Captura de Audio (Micrófono)</div>
+                <div class="step-description">
+                    El micrófono captura audio continuamente cada <span class="highlight">100ms</span> (0.1 segundos).
+                    <div class="code-snippet">
+sd.InputStream(callback=audio_callback)<br>
+↓<br>
+audio_callback() se ejecuta automáticamente<br>
+↓<br>
+audio_q.put(bytes(indata)) # Guarda en cola
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">🎙️ Micrófono</span>
+                        <span class="component-box">📦 Chunks de 800 muestras</span>
+                        <span class="component-box">🔄 Queue Thread-Safe</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-title">📡 Generador de Requests</div>
+                <div class="step-description">
+                    El generador <span class="highlight">request_generator()</span> prepara los datos para enviar a Google Cloud.
+                    <div class="code-snippet">
+1er mensaje: Configuración (config + recognizer)<br>
+2do+ mensajes: Chunks de audio desde la cola<br>
+<br>
+while True:<br>
+&nbsp;&nbsp;data = audio_q.get()  # Espera audio<br>
+&nbsp;&nbsp;yield StreamingRecognizeRequest(audio=data)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-title">☁️ Google Cloud Speech API</div>
+                <div class="step-description">
+                    Los chunks de audio se envían a Google Cloud para transcripción en tiempo real.
+                    <div class="code-snippet">
+client.streaming_recognize(requests)<br>
+↓<br>
+Google procesa el audio con modelo "telephony"<br>
+↓<br>
+Retorna transcripciones parciales y finales
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">🌐 API Speech V2</span>
+                        <span class="component-box">🇪🇸 es-US</span>
+                        <span class="component-box">📞 Modelo Telephony</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">5</div>
+                <div class="step-title">📝 Procesamiento de Respuestas</div>
+                <div class="step-description">
+                    Se procesan las transcripciones en tiempo real.
+                    <div class="code-snippet">
+for response in responses:<br>
+&nbsp;&nbsp;for result in response.results:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;text = result.alternatives[0].transcript<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(f"🗣️ {text}")  # Parcial<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if result.is_final:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"✅ {text}")  # Final<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if "salir" in text:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return  # Termina programa
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">🔄</div>
+            
+            <div class="flow-step" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); border-left-color: #fdcb6e;">
+                <div class="step-number" style="background: #fdcb6e;">∞</div>
+                <div class="step-title">🔁 Ciclo Continuo</div>
+                <div class="step-description">
+                    El proceso se repite continuamente hasta que:
+                    <ul style="margin-top: 10px; padding-left: 50px;">
+                        <li>El usuario dice "salir" ✋</li>
+                        <li>Se presiona Ctrl+C ⌨️</li>
+                        <li>Ocurre un error ❌</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-title">📚 Leyenda de Componentes</div>
+            <div class="legend-item">
+                <div class="legend-icon">🎤</div>
+                <div><strong>sounddevice:</strong> Captura audio del micrófono en tiempo real</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">📦</div>
+                <div><strong>Queue:</strong> Almacena chunks de audio de forma thread-safe</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">☁️</div>
+                <div><strong>Google Cloud Speech V2:</strong> API de transcripción de voz a texto</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">🔄</div>
+                <div><strong>Generator:</strong> Envía datos de forma continua sin bloquear el programa</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">✅</div>
+                <div><strong>is_final:</strong> Indica cuando una frase está completamente transcrita</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

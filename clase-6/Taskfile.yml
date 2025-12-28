@@ -1,0 +1,62 @@
+version: '3'
+
+tasks:
+  create-venv:
+    desc: "Crear un entorno virtual en .venv"
+    cmds:
+      - python3 -m venv .venv
+    status:
+      - test -d .venv
+
+  init-venv:
+    desc: "Inicializar (activar) el entorno virtual"
+    cmds:
+      - echo "Para activar el entorno virtual, ejecuta:"
+      - echo "source .venv/bin/activate"
+
+  create-env:
+    desc: "Crear archivo .env con variables de entorno necesarias"
+    cmds:
+      - |
+        cat > .env << 'EOF'
+        PROJECT_ID=your-project-id
+        RECOGNIZER_ID=your-recognizer-id
+        LOCATION=us-central1
+        EOF
+      - echo "✅ Archivo .env creado. Por favor, edita los valores según tu configuración."
+    status:
+      - test -f .env
+
+  install-deps:
+    desc: "Instalar dependencias desde requirements.txt"
+    cmds:
+      - .venv/bin/pip install --upgrade pip
+      - .venv/bin/pip install -r requirements.txt
+    preconditions:
+      - test -d .venv
+      - test -f requirements.txt
+
+  run:
+    desc: "Inicializar el script de asistente Gemini"
+    cmds:
+      - .venv/bin/python asistente-gemini.py
+    preconditions:
+      - test -d .venv
+      - test -f asistente-gemini.py
+      - test -f .env
+      - test -f vertexai.json
+
+  setup:
+    desc: "Configuración completa: crear venv, instalar dependencias y crear .env"
+    deps:
+      - create-venv
+      - create-env
+      - install-deps
+    cmds:
+      - echo "✅ Configuración completa. Activa el entorno con source .venv/bin/activate"
+
+  clean:
+    desc: "Limpiar el entorno virtual"
+    cmds:
+      - rm -rf .venv
+      - echo "✅ Entorno virtual eliminado"
