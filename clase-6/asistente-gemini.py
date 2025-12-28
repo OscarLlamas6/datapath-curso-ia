@@ -19,7 +19,7 @@ load_dotenv()
 PROJECT_ID = os.getenv("PROJECT_ID")
 RECOGNIZER_ID = os.getenv("RECOGNIZER_ID")
 LOCATION = os.getenv("LOCATION")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./cuenta-servicio.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./vertexai.json"
 
 # Inicializar cliente Gen AI para Vertex AI
 genai_client = genai.Client(
@@ -58,7 +58,7 @@ def responder_con_gemini(texto_usuario: str):
 # Transcripción en streaming con Speech-to-Text v2
 def stream_transcription():
     client = speech_v2.SpeechClient()
-    recognizer = f"projects/{PROJECT_ID}/locations/global/recognizers/{RECOGNIZER_ID}"
+    recognizer = f"projects/{PROJECT_ID}/locations/{LOCATION}/recognizers/{RECOGNIZER_ID}"
 
     decoding_config = ExplicitDecodingConfig(
         encoding="LINEAR16",
@@ -68,7 +68,7 @@ def stream_transcription():
 
     config = RecognitionConfig(
         explicit_decoding_config=decoding_config,
-        language_codes=["es-CO"],
+        language_codes=["es-US"],
         model="telephony"
     )
 

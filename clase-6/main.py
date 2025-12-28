@@ -16,6 +16,8 @@ import traceback
 load_dotenv()
 PROJECT_ID = os.getenv("PROJECT_ID")
 RECOGNIZER_ID = os.getenv("RECOGNIZER_ID")
+LOCATION = os.getenv("LOCATION")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./vertexai.json"
 
 # Parámetros de audio
 RATE = 8000  # Frecuencia de 8kHz (telephony) es una latencia baja. (enfocada a llamadas de voz)
@@ -42,7 +44,7 @@ def stream_transcription():
 
     config = RecognitionConfig(
         explicit_decoding_config=decoding_config,
-        language_codes=["es-CO"], # Español, enfocado a Colombia
+        language_codes=["es-GT"], # Español, enfocado a Colombia
         model="telephony" # Modelo optimizado para llamadas de voz
     )
 

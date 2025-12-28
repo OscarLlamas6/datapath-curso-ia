@@ -1,3 +1,5 @@
 env/
 .env
 cuenta-servicio.json
+vertexai.json
+.venv
