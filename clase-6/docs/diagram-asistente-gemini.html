@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente de Voz con Gemini AI - Flujo Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4facfe;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .flow-step {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+            border-left: 5px solid #4facfe;
+        }
+        
+        .flow-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+        }
+        
+        .flow-step.gemini-step {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-left-color: #ff6b6b;
+        }
+        
+        .step-number {
+            position: absolute;
+            left: -15px;
+            top: 20px;
+            background: #4facfe;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+        
+        .gemini-step .step-number {
+            background: #ff6b6b;
+        }
+        
+        .step-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 10px;
+            padding-left: 35px;
+            font-weight: bold;
+        }
+        
+        .step-description {
+            color: #555;
+            line-height: 1.6;
+            padding-left: 35px;
+        }
+        
+        .code-snippet {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        
+        .arrow {
+            text-align: center;
+            color: #4facfe;
+            font-size: 2em;
+            margin: 10px 0;
+        }
+        
+        .arrow.branch {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .component-box {
+            display: inline-block;
+            background: #4facfe;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+        
+        .component-box.gemini {
+            background: #ff6b6b;
+        }
+        
+        .highlight {
+            background: #ffeaa7;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .legend {
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .legend-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .legend-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            font-size: 1.5em;
+        }
+        
+        .tech-specs {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        
+        .tech-specs-title {
+            font-weight: bold;
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Asistente de Voz con Gemini AI</h1>
+        <div class="subtitle">Flujo Completo: Speech-to-Text + Análisis de Sentimiento + Feedback Bilingüe + Gemini AI</div>
+        
+        <div class="flow-diagram">
+            <div class="flow-step">
+                <div class="step-number">1</div>
+                <div class="step-title">🔧 Inicialización del Sistema</div>
+                <div class="step-description">
+                    Se cargan las credenciales y se inicializan dos clientes principales: Speech API y Gemini AI.
+                    <div class="code-snippet">
+# Variables de entorno<br>
+PROJECT_ID, RECOGNIZER_ID, LOCATION<br>
+GOOGLE_APPLICATION_CREDENTIALS = "./vertexai.json"<br>
+<br>
+# Cliente Gemini AI<br>
+genai_client = genai.Client(<br>
+&nbsp;&nbsp;vertexai=True,<br>
+&nbsp;&nbsp;project=PROJECT_ID,<br>
+&nbsp;&nbsp;location=LOCATION<br>
+)<br>
+<br>
+# Parámetros de audio<br>
+RATE = 8000 Hz (telephony)<br>
+CHANNELS = 1 (mono)<br>
+audio_q = Queue()
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">📁 .env</span>
+                        <span class="component-box">🔑 Vertex AI Credentials</span>
+                        <span class="component-box gemini">🤖 Gemini Client</span>
+                        <span class="component-box">☁️ Speech Client</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">📊 Especificaciones Técnicas:</div>
+                        • <strong>Modelo Gemini:</strong> gemini-2.5-flash (última generación)<br>
+                        • <strong>Vertex AI:</strong> Integración nativa con Google Cloud<br>
+                        • <strong>Audio:</strong> 8kHz mono, formato LINEAR16
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">2</div>
+                <div class="step-title">🎤 Captura de Audio en Tiempo Real</div>
+                <div class="step-description">
+                    El micrófono captura audio continuamente mediante un callback asíncrono.
+                    <div class="code-snippet">
+sd.InputStream(<br>
+&nbsp;&nbsp;samplerate=8000,<br>
+&nbsp;&nbsp;channels=1,<br>
+&nbsp;&nbsp;dtype="int16",<br>
+&nbsp;&nbsp;callback=audio_callback<br>
+)<br>
+<br>
+def audio_callback(indata, frames, time, status):<br>
+&nbsp;&nbsp;audio_q.put(bytes(indata))  # Thread-safe
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">🎙️ sounddevice</span>
+                        <span class="component-box">📦 Chunks de 800 muestras</span>
+                        <span class="component-box">⏱️ Cada 100ms</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">🔍 Detalles Técnicos:</div>
+                        • <strong>Callback asíncrono:</strong> Se ejecuta en un thread separado<br>
+                        • <strong>Buffer size:</strong> RATE/10 = 800 muestras por chunk<br>
+                        • <strong>Latencia:</strong> ~100ms por chunk
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">3</div>
+                <div class="step-title">📡 Streaming a Google Cloud Speech V2</div>
+                <div class="step-description">
+                    Los chunks de audio se envían mediante un generador Python a la API de Speech.
+                    <div class="code-snippet">
+def request_generator():<br>
+&nbsp;&nbsp;# 1er mensaje: Configuración<br>
+&nbsp;&nbsp;yield StreamingRecognizeRequest(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;recognizer=recognizer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;streaming_config=streaming_config<br>
+&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;# Mensajes subsecuentes: Audio<br>
+&nbsp;&nbsp;while True:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;data = audio_q.get()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;yield StreamingRecognizeRequest(audio=data)<br>
+<br>
+responses = client.streaming_recognize(<br>
+&nbsp;&nbsp;requests=request_generator()<br>
+)
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">🌐 Speech API V2</span>
+                        <span class="component-box">📞 Modelo Telephony</span>
+                        <span class="component-box">🇺🇸 es-US</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">⚙️ Configuración:</div>
+                        • <strong>Recognizer:</strong> projects/{PROJECT_ID}/locations/{LOCATION}/recognizers/{RECOGNIZER_ID}<br>
+                        • <strong>Encoding:</strong> LINEAR16 (PCM sin comprimir)<br>
+                        • <strong>Language:</strong> es-US (Español Estados Unidos)<br>
+                        • <strong>Modelo:</strong> telephony (optimizado para voz telefónica)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">4</div>
+                <div class="step-title">📝 Procesamiento de Transcripciones</div>
+                <div class="step-description">
+                    La API retorna transcripciones parciales y finales en tiempo real.
+                    <div class="code-snippet">
+for response in responses:<br>
+&nbsp;&nbsp;for result in response.results:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if result.alternatives:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text = result.alternatives[0].transcript<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"🗣️ {text}")  # Parcial<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if result.is_final:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"✅ Usuario: {text}")  # Final<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Aquí se procesa el texto final
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">🔄 Streaming bidireccional</span>
+                        <span class="component-box">⚡ Baja latencia</span>
+                        <span class="component-box">✅ is_final flag</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">📊 Tipos de resultados:</div>
+                        • <strong>Parciales:</strong> Transcripciones intermedias que se actualizan<br>
+                        • <strong>Finales (is_final=True):</strong> Transcripción definitiva de la frase<br>
+                        • <strong>Alternatives:</strong> Múltiples opciones ordenadas por confianza
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step gemini-step">
+                <div class="step-number">5</div>
+                <div class="step-title">🔍 Análisis de Sentimiento con Gemini</div>
+                <div class="step-description">
+                    Cada transcripción final se analiza para detectar el sentimiento: positivo, negativo o neutral.
+                    <div class="code-snippet">
+def analizar_sentimiento(texto: str) -> str:<br>
+&nbsp;&nbsp;"""Analiza el sentimiento usando Gemini AI"""<br>
+&nbsp;&nbsp;prompt = """Analiza el sentimiento del siguiente texto<br>
+&nbsp;&nbsp;y responde SOLO con una palabra: 'positivo',<br>
+&nbsp;&nbsp;'negativo' o 'neutral'."""<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;response = genai_client.models.generate_content(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model="gemini-2.5-flash",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;contents=prompt<br>
+&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;return response.text.strip().lower()
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box gemini">🧠 NLP Avanzado</span>
+                        <span class="component-box gemini">😊 Positivo</span>
+                        <span class="component-box gemini">😟 Negativo</span>
+                        <span class="component-box gemini">😐 Neutral</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">🎯 Clasificación de Sentimientos:</div>
+                        • <strong>Positivo:</strong> Comentarios felices, agradecimientos, satisfacción<br>
+                        • <strong>Negativo:</strong> Quejas, frustración, insatisfacción<br>
+                        • <strong>Neutral:</strong> Preguntas, información, conversación casual<br>
+                        • <strong>Prompt Engineering:</strong> Instrucciones específicas para respuestas consistentes
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step" style="background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); border-left-color: #28a745;">
+                <div class="step-number" style="background: #28a745;">6</div>
+                <div class="step-title">✨ Sistema de Feedback Positivo Bilingüe</div>
+                <div class="step-description">
+                    Si el sentimiento es POSITIVO, se activa el sistema de registro de feedback bilingüe.
+                    <div class="code-snippet">
+if sentimiento == 'positivo':<br>
+&nbsp;&nbsp;procesar_feedback_positivo(text)<br>
+<br>
+def procesar_feedback_positivo(texto: str):<br>
+&nbsp;&nbsp;global feedback_positivo_count<br>
+&nbsp;&nbsp;feedback_positivo_count += 1<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;print("✨ ¡FEEDBACK POSITIVO DETECTADO! ✨")<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;# Mostrar en español (original)<br>
+&nbsp;&nbsp;print(f"📝 Español: {texto}")<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;# Traducir al inglés con Gemini<br>
+&nbsp;&nbsp;traduccion = traducir_a_ingles(texto)<br>
+&nbsp;&nbsp;print(f"🌍 English: {traduccion}")<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;print(f"📊 Total feedbacks: {feedback_positivo_count}")
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box" style="background: #28a745;">📝 Español Original</span>
+                        <span class="component-box" style="background: #28a745;">🔄 Traducción Automática</span>
+                        <span class="component-box" style="background: #28a745;">🌍 English Output</span>
+                        <span class="component-box" style="background: #28a745;">📊 Contador</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">🌐 Traducción Bilingüe:</div>
+                        • <strong>Detección automática:</strong> Solo se activa con sentimiento positivo<br>
+                        • <strong>Gemini Translator:</strong> Traduce español → inglés usando IA<br>
+                        • <strong>Display dual:</strong> Muestra ambos idiomas en consola<br>
+                        • <strong>Contador persistente:</strong> Registra total de feedbacks positivos<br>
+                        • <strong>Uso práctico:</strong> Sistema de registro de satisfacción del cliente
+                    </div>
+                    <div class="tech-specs" style="background: #e8f5e9; border-left-color: #28a745; margin-top: 15px;">
+                        <div class="tech-specs-title">💡 Ejemplo de Output:</div>
+                        <code style="display: block; background: #fff; padding: 10px; border-radius: 5px; margin-top: 8px;">
+🗣️ Estoy muy contento con este asistente<br>
+✅ Usuario: Estoy muy contento con este asistente<br>
+🔍 Analizando sentimiento...<br>
+😊 Sentimiento detectado: POSITIVO<br>
+<br>
+============================================================<br>
+✨ ¡FEEDBACK POSITIVO DETECTADO! ✨<br>
+============================================================<br>
+📝 Español: Estoy muy contento con este asistente<br>
+🔄 Traduciendo al inglés...<br>
+🌍 English: I am very happy with this assistant<br>
+<br>
+📊 Total de feedbacks positivos registrados: 1<br>
+============================================================
+                        </code>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step gemini-step">
+                <div class="step-number">7</div>
+                <div class="step-title">🤖 Consulta a Gemini AI</div>
+                <div class="step-description">
+                    Cuando se recibe una transcripción final, se envía a Gemini para generar una respuesta.
+                    <div class="code-snippet">
+def responder_con_gemini(texto_usuario: str):<br>
+&nbsp;&nbsp;print("🤖 Escribiendo...")<br>
+&nbsp;&nbsp;response = genai_client.models.generate_content(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model="gemini-2.5-flash",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;contents="Responda de forma breve y concisa, "<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"no más de 100 caracteres: " + texto_usuario<br>
+&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;if response and response.text:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(f"🧩 Gemini: {response.text}")
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box gemini">🤖 Gemini 2.5 Flash</span>
+                        <span class="component-box gemini">⚡ Respuesta rápida</span>
+                        <span class="component-box gemini">💬 Máx 100 chars</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">🧠 Características de Gemini:</div>
+                        • <strong>Modelo:</strong> gemini-2.5-flash (optimizado para velocidad)<br>
+                        • <strong>API:</strong> Google GenAI SDK con Vertex AI<br>
+                        • <strong>Prompt engineering:</strong> Respuestas concisas limitadas a 100 caracteres<br>
+                        • <strong>Latencia:</strong> ~1-2 segundos por respuesta
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">⬇️</div>
+            
+            <div class="flow-step">
+                <div class="step-number">8</div>
+                <div class="step-title">💬 Respuesta en Texto</div>
+                <div class="step-description">
+                    La respuesta de Gemini se muestra en la consola (en este script solo texto, sin TTS).
+                    <div class="code-snippet">
+# Output en consola<br>
+🗣️ [Transcripción parcial...]<br>
+✅ Usuario: ¿Cuál es la capital de Francia?<br>
+🤖 Escribiendo...<br>
+🧩 Gemini: París es la capital de Francia.
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span class="component-box">📺 Output: Consola</span>
+                        <span class="component-box">📝 Solo texto</span>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">💡 Nota:</div>
+                        Este script NO incluye Text-to-Speech. La respuesta de Gemini solo se muestra como texto en la terminal.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">🔄</div>
+            
+            <div class="flow-step" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-left-color: #00d2ff;">
+                <div class="step-number" style="background: #00d2ff;">∞</div>
+                <div class="step-title">🔁 Ciclo Conversacional Continuo</div>
+                <div class="step-description">
+                    El asistente permanece activo escuchando y respondiendo hasta que se cumple una condición de salida.
+                    <div class="code-snippet">
+# Dentro del loop de transcripción<br>
+if result.is_final:<br>
+&nbsp;&nbsp;if "salir" in text.lower():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print("👋 Fin del asistente por comando de voz")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;print(f"📊 Resumen: {feedback_positivo_count} feedbacks")<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return  # Termina el programa<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;# Analizar sentimiento<br>
+&nbsp;&nbsp;sentimiento = analizar_sentimiento(text)<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;# Si es positivo, registrar feedback bilingüe<br>
+&nbsp;&nbsp;if sentimiento == 'positivo':<br>
+&nbsp;&nbsp;&nbsp;&nbsp;procesar_feedback_positivo(text)<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;# Responder con Gemini<br>
+&nbsp;&nbsp;responder_con_gemini(text)
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <strong>Condiciones de terminación:</strong>
+                        <ul style="margin-top: 10px; padding-left: 50px;">
+                            <li>🗣️ El usuario dice <span class="highlight">"salir"</span></li>
+                            <li>⌨️ Se presiona <span class="highlight">Ctrl+C</span> (KeyboardInterrupt)</li>
+                            <li>❌ Ocurre un error en el streaming o API</li>
+                        </ul>
+                    </div>
+                    <div class="tech-specs">
+                        <div class="tech-specs-title">🔄 Flujo del ciclo mejorado:</div>
+                        1. Escucha continua del micrófono<br>
+                        2. Transcripción en tiempo real<br>
+                        3. Al detectar frase final → <strong>Analizar sentimiento</strong><br>
+                        4. Si positivo → <strong>Registrar feedback bilingüe</strong><br>
+                        5. Consultar Gemini para respuesta<br>
+                        6. Muestra respuesta → Vuelve a escuchar<br>
+                        7. Repite hasta comando de salida<br>
+                        8. Al salir → Muestra resumen de feedbacks
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-title">📚 Tecnologías y Componentes</div>
+            <div class="legend-item">
+                <div class="legend-icon">🎤</div>
+                <div><strong>sounddevice:</strong> Biblioteca Python para captura de audio en tiempo real desde el micrófono</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">📦</div>
+                <div><strong>queue.Queue:</strong> Cola thread-safe para comunicación entre el callback de audio y el generador</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">☁️</div>
+                <div><strong>Google Cloud Speech V2:</strong> API de transcripción de voz a texto con soporte para streaming</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">🤖</div>
+                <div><strong>Google Gemini AI:</strong> Modelo de lenguaje multimodal de última generación (gemini-2.5-flash)</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">🔄</div>
+                <div><strong>Generator Pattern:</strong> Patrón de diseño Python para streaming de datos sin bloquear el programa</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">🔑</div>
+                <div><strong>Vertex AI:</strong> Plataforma de Google Cloud para ML/AI con autenticación mediante service account</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">✅</div>
+                <div><strong>is_final:</strong> Flag que indica cuando Speech API ha completado la transcripción de una frase</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">🔍</div>
+                <div><strong>Análisis de Sentimiento:</strong> Técnica de NLP para clasificar emociones en texto (positivo/negativo/neutral)</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">🌍</div>
+                <div><strong>Traducción Automática:</strong> Gemini traduce español → inglés para registro bilingüe de feedbacks</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-icon">📊</div>
+                <div><strong>Contador de Feedbacks:</strong> Variable global que registra el total de comentarios positivos en la sesión</div>
+            </div>
+        </div>
+        
+        <div class="legend" style="margin-top: 20px; background: #fff3cd; border: 2px solid #ffc107;">
+            <div class="legend-title" style="color: #856404;">⚠️ Diferencias con main.py</div>
+            <div style="color: #856404; line-height: 1.8;">
+                <strong>main.py:</strong> Solo transcripción (Speech-to-Text)<br>
+                <strong>asistente-gemini.py:</strong> Transcripción + Análisis de Sentimiento + Feedback Bilingüe + Gemini AI<br>
+                <br>
+                <strong>Ventajas:</strong><br>
+                • Asistente conversacional completo con IA<br>
+                • Detección automática de sentimientos (NLP avanzado)<br>
+                • Sistema de registro de feedbacks positivos bilingüe (ES/EN)<br>
+                • Contador de satisfacción del cliente<br>
+                • Traducción automática con Gemini AI
+            </div>
+        </div>
+        
+        <div class="legend" style="margin-top: 20px; background: #e8f5e9; border: 2px solid #28a745;">
+            <div class="legend-title" style="color: #2e7d32;">🎓 Conceptos Educativos Implementados</div>
+            <div style="color: #2e7d32; line-height: 1.8;">
+                <strong>1. Análisis de Sentimiento (Sentiment Analysis):</strong><br>
+                &nbsp;&nbsp;&nbsp;• Técnica de NLP para clasificar emociones en texto<br>
+                &nbsp;&nbsp;&nbsp;• Usa Gemini AI como clasificador<br>
+                &nbsp;&nbsp;&nbsp;• Aplicación: Chatbots, atención al cliente, redes sociales<br>
+                <br>
+                <strong>2. Prompt Engineering:</strong><br>
+                &nbsp;&nbsp;&nbsp;• Instrucciones específicas para obtener respuestas consistentes<br>
+                &nbsp;&nbsp;&nbsp;• Validación de respuestas esperadas<br>
+                &nbsp;&nbsp;&nbsp;• Técnica fundamental en IA generativa<br>
+                <br>
+                <strong>3. Traducción Automática Neural:</strong><br>
+                &nbsp;&nbsp;&nbsp;• Gemini como motor de traducción multilingüe<br>
+                &nbsp;&nbsp;&nbsp;• Procesamiento contextual (no solo palabra por palabra)<br>
+                &nbsp;&nbsp;&nbsp;• Aplicación: Internacionalización de aplicaciones<br>
+                <br>
+                <strong>4. Sistema de Feedback Bilingüe:</strong><br>
+                &nbsp;&nbsp;&nbsp;• Registro automático de comentarios positivos<br>
+                &nbsp;&nbsp;&nbsp;• Output en múltiples idiomas para análisis global<br>
+                &nbsp;&nbsp;&nbsp;• Aplicación: Métricas de satisfacción del cliente
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -34,11 +34,93 @@ CHANNELS = 1
 CHUNK = int(RATE / 10)
 audio_q = queue.Queue()
 
+# Contador de feedbacks positivos
+feedback_positivo_count = 0
+
 # Callback del micrófono
 def audio_callback(indata, frames, time, status):
     if status:
         print("⚠️", status)
     audio_q.put(bytes(indata))
+
+# Función para analizar el sentimiento del texto usando Gemini
+def analizar_sentimiento(texto: str) -> str:
+    """
+    Analiza el sentimiento de un texto usando Gemini AI.
+    Retorna: 'positivo', 'negativo' o 'neutral'
+    """
+    try:
+        prompt = f"""Analiza el sentimiento del siguiente texto y responde SOLO con una palabra: 'positivo', 'negativo' o 'neutral'.
+
+Texto: "{texto}"
+
+Respuesta (solo una palabra):"""
+        
+        response = genai_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        
+        if response and response.text:
+            sentimiento = response.text.strip().lower()
+            # Validar que la respuesta sea una de las opciones esperadas
+            if sentimiento in ['positivo', 'negativo', 'neutral']:
+                return sentimiento
+            else:
+                return 'neutral'  # Por defecto si no reconoce
+        return 'neutral'
+    except Exception as e:
+        print(f"⚠️ Error al analizar sentimiento: {e}")
+        return 'neutral'
+
+# Función para traducir texto al inglés usando Gemini
+def traducir_a_ingles(texto: str) -> str:
+    """
+    Traduce un texto en español al inglés usando Gemini AI.
+    Retorna el texto traducido.
+    """
+    try:
+        prompt = f"""Traduce el siguiente texto del español al inglés. Responde SOLO con la traducción, sin explicaciones adicionales.
+
+Texto en español: "{texto}"
+
+Traducción al inglés:"""
+        
+        response = genai_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        
+        if response and response.text:
+            return response.text.strip()
+        return "[Error en traducción]"
+    except Exception as e:
+        print(f"⚠️ Error al traducir: {e}")
+        return "[Error en traducción]"
+
+# Función para procesar feedback positivo
+def procesar_feedback_positivo(texto: str):
+    """
+    Procesa un feedback positivo: lo traduce al inglés y lo muestra en ambos idiomas.
+    También incrementa el contador de feedbacks positivos.
+    """
+    global feedback_positivo_count
+    feedback_positivo_count += 1
+    
+    print("\n" + "="*60)
+    print("✨ ¡FEEDBACK POSITIVO DETECTADO! ✨")
+    print("="*60)
+    
+    # Mostrar en español (original)
+    print(f"📝 Español: {texto}")
+    
+    # Traducir y mostrar en inglés
+    print("🔄 Traduciendo al inglés...")
+    traduccion = traducir_a_ingles(texto)
+    print(f"🌍 English: {traduccion}")
+    
+    print(f"\n📊 Total de feedbacks positivos registrados: {feedback_positivo_count}")
+    print("="*60 + "\n")
 
 # Función para consultar Gemini y obtener respuesta en texto
 def responder_con_gemini(texto_usuario: str):
@@ -58,7 +140,7 @@ def responder_con_gemini(texto_usuario: str):
 # Transcripción en streaming con Speech-to-Text v2
 def stream_transcription():
     client = speech_v2.SpeechClient()
-    recognizer = f"projects/{PROJECT_ID}/locations/{LOCATION}/recognizers/{RECOGNIZER_ID}"
+    recognizer = f"projects/{PROJECT_ID}/locations/global/recognizers/{RECOGNIZER_ID}"
 
     decoding_config = ExplicitDecodingConfig(
         encoding="LINEAR16",
@@ -68,7 +150,7 @@ def stream_transcription():
 
     config = RecognitionConfig(
         explicit_decoding_config=decoding_config,
-        language_codes=["es-US"],
+        language_codes=["es-GT"],
         model="telephony"
     )
 
@@ -99,8 +181,27 @@ def stream_transcription():
                         if result.is_final:
                             print("✅ Usuario:", text)
                             if "salir" in text.lower():
-                                print("👋 Fin del asistente por comando de voz. ¡Gracias por usar XAIOP!")
+                                print("\n👋 Fin del asistente por comando de voz. ¡Gracias por usar XAIOP!")
+                                print(f"📊 Resumen: Se registraron {feedback_positivo_count} feedbacks positivos en esta sesión.")
                                 return
+                            
+                            # Analizar el sentimiento del texto
+                            print("🔍 Analizando sentimiento...")
+                            sentimiento = analizar_sentimiento(text)
+                            
+                            # Mostrar el sentimiento detectado con emoji
+                            emoji_sentimiento = {
+                                'positivo': '😊',
+                                'negativo': '😟',
+                                'neutral': '😐'
+                            }
+                            print(f"{emoji_sentimiento.get(sentimiento, '😐')} Sentimiento detectado: {sentimiento.upper()}")
+                            
+                            # Si es positivo, procesar como feedback
+                            if sentimiento == 'positivo':
+                                procesar_feedback_positivo(text)
+                            
+                            # Responder con Gemini
                             responder_con_gemini(text)
     except KeyboardInterrupt:
         print("\n👋 Finalizado por el usuario.")
